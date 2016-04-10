@@ -53,16 +53,18 @@ int main(int argc, char * argv[])
 		printf("invalid args. SocketTester.exe -ip <ip4> -port<port> -data <what you want to send>");
 		exit(0);
 	}
-	printf("trying to connect to connect to: %s on %d...\n", ip.c_str(), port);
+	printf("Trying to connect to connect to: %s on %d...\n", ip.c_str(), port);
 
 	if (conn.connectToServer(ip, port) == NETWORK_ERROR)
 	{
 		printf("couldn't connect to: %s on %d\n",ip.c_str(), port);
 		exit(-1);
 	}
+	printf("Connected!\n");
 	printf("sending after 1 second: %s\n", dataToSend.c_str());
 	Sleep(1000);
 	conn.sendData(socketIndex, dataToSend.c_str());
+	printf("now waiting for data return...\n");
 
 	do {
 		if (conn.hasRecivedData(socketIndex))
@@ -82,7 +84,7 @@ int main(int argc, char * argv[])
 			done = true;
 		}
 	} while (!done);
-
+	printf("All done! shutting down\n");
 	conn.shutdown();
 	return 0;
 }
