@@ -17,20 +17,51 @@ int main(int argc, char * argv[])
 	int recvbuflen = DEFAULT_BUFLEN;
 	bool done = false;
 	int socketIndex = 0;
-	
-	string ip = "127.0.0.1";
-	//string dataToSend = "-hash,C:\\Users\\Victor\\Desktop\\Imagens\\rad1E0A3.jpg";
-	string dataToSend = "-ADDIMG|C:\\Users\\Victor\\Desktop\\Imagens\\rad1E0A3.jpg";
-	int port = 2345;//port for createImageHash
+	if (argc < 6)
+	{
+		printf("not enough args, SocketTester.exe -ip <ip4> -port<port> -data <what you want to send>");
+		exit(0);
+	}
+
+	string ip;
+	string dataToSend;
+	int port = -1;
 	NetworkConnection conn;
+
+	int i = 0;
+	while (i < argc)
+	{
+		if (strcmp(argv[i], "-ip") == 0)
+		{
+			i++;
+			ip = argv[i];
+		}
+		else if (strcmp(argv[i], "-port") == 0)
+		{
+			i++;
+			port = atoi(argv[i]);
+		}
+		else if (strcmp(argv[i], "-data") == 0)
+		{
+			i++;
+			dataToSend = argv[i];
+		}
+		i++;
+	}
+	if (ip.empty() || dataToSend.empty() || port == -1)
+	{
+		printf("invalid args. SocketTester.exe -ip <ip4> -port<port> -data <what you want to send>");
+		exit(0);
+	}
+	printf("trying to connect to connect to: %s on %d...\n", ip.c_str(), port);
 
 	if (conn.connectToServer(ip, port) == NETWORK_ERROR)
 	{
 		printf("couldn't connect to: %s on %d\n",ip.c_str(), port);
 		exit(-1);
 	}
-	
-	
+	printf("sending after 1 second: %s\n", dataToSend.c_str());
+	Sleep(1000);
 	conn.sendData(socketIndex, dataToSend.c_str());
 
 	do {
