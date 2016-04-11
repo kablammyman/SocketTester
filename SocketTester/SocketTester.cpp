@@ -9,13 +9,13 @@
 
 using namespace std;
 
-#define DEFAULT_BUFLEN 512
+#define DEFAULT_BUFLEN 1024
 
 int main(int argc, char * argv[])
 {
 	char recvbuf[DEFAULT_BUFLEN];
 	int recvbuflen = DEFAULT_BUFLEN;
-	bool done = false;
+	bool done = true;
 	int socketIndex = 0;
 	if (argc < 6)
 	{
@@ -46,6 +46,10 @@ int main(int argc, char * argv[])
 			i++;
 			dataToSend = argv[i];
 		}
+		else if (strcmp(argv[i], "-stayOn") == 0)
+		{
+			done = false;
+		}
 		i++;
 	}
 	if (ip.empty() || dataToSend.empty() || port == -1)
@@ -72,16 +76,15 @@ int main(int argc, char * argv[])
 			int iResult = conn.getData(socketIndex, recvbuf, DEFAULT_BUFLEN);
 			if (iResult > 0)
 			{
-				recvbuf[iResult] = '\0';
-				printf("%s -> %d bytes.\n", recvbuf, iResult);
+				if(iResult < DEFAULT_BUFLEN)
+					recvbuf[iResult] = '\0';
+				printf("%s->%d bytes.\n", recvbuf, iResult);
 
 			}
 			else if (iResult == 0)//client disconnected
 				printf("server disconnected\n");
 			else
 				printf("recv failed: %d\n", WSAGetLastError());
-
-			done = true;
 		}
 	} while (!done);
 	printf("All done! shutting down\n");
