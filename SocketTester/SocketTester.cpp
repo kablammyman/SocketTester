@@ -82,7 +82,10 @@ int main(int argc, char * argv[])
 
 			}
 			else if (iResult == 0)//client disconnected
+			{
 				printf("server disconnected\n");
+				done = true;
+			}
 			else
 				printf("recv failed: %d\n", WSAGetLastError());
 		}
